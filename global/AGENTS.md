@@ -14,4 +14,4 @@
 
 ## Model routing
 
-- Before spawning or delegating a subagent, or handing off a review, load the `ai-workflow` skill and give the handoff the model and thinking level it names.
+- Before spawning or delegating a subagent, handing off a review, or opening or merging a pull request, load the `ai-workflow` skill and follow it.

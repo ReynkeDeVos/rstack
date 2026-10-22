@@ -1,6 +1,6 @@
 ---
 name: ai-workflow
-description: Routes each task to its model and thinking level. Use when spawning or delegating a subagent, handing off a review, or when asked which model or thinking level to use.
+description: Routes each task to its model and thinking level, and gates pull-request merges on a cross-model review. Use when spawning or delegating a subagent, handing off a review, opening or merging a pull request, or when asked which model or thinking level to use.
 ---
 
 # AI workflow
@@ -26,6 +26,14 @@ The user's model routing, updated 9 October 2026. Following it is the user's exp
 3. Take the row's thinking level, adjust it by the model's note above, and pass it with the model using the settings below. The tables show the row defaults.
 
 The session's own model and thinking level stay the user's choice: route the work you hand off.
+
+## Cross-review before merge
+
+A PR a Claude model opened gets an independent review from GPT-6.1 Sol at High before it merges; one a GPT model opened gets one from Opus 5.5 at High. This overrides the Review code row, and Opus's effort here is `high`.
+
+1. Once the PR is open, hand the reviewer its URL and purpose. Ask for findings and a confidence that it is ready to merge: high, medium or low.
+2. If the reviewer raises findings, fix or answer each, push any changes, and send a fresh round with the prior findings and your answers.
+3. The PR is ready to merge only when a Claude model and a GPT model have each reported high confidence on its current head commit; a new head commit needs both again. Until then, report what blocks it and leave the PR open.
 
 ## Settings
 
