@@ -7,6 +7,8 @@ My own skills for Codex and Claude Code.
 
 `docs/how-to-write-skills.md` collects how both tools load and run skills.
 
+`global/AGENTS.md` is my user-wide `~/.agents/AGENTS.md`.
+
 ## Install
 
 Codex reads `~/.agents/skills`; Claude Code reads `~/.claude/skills`. Link each skill into both:
@@ -17,4 +19,10 @@ for skill in skills/*/; do
   ln -sfn "$PWD/skills/$name" ~/.agents/skills/"$name"
   ln -sfn ../../.agents/skills/"$name" ~/.claude/skills/"$name"
 done
+```
+
+Link the user-wide instructions back:
+
+```sh
+ln -sfn "$PWD/global/AGENTS.md" ~/.agents/AGENTS.md
 ```
