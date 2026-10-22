@@ -21,8 +21,10 @@ for skill in skills/*/; do
 done
 ```
 
-Link the user-wide instructions back:
+Link the user-wide instructions back, and point Codex and Claude Code at them:
 
 ```sh
 ln -sfn "$PWD/global/AGENTS.md" ~/.agents/AGENTS.md
+ln -sfn ~/.agents/AGENTS.md ~/.codex/AGENTS.md
+ln -sfn ~/.agents/AGENTS.md ~/.claude/CLAUDE.md
 ```
