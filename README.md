@@ -2,7 +2,7 @@
 
 My own skills for Codex and Claude Code.
 
-- `ai-workflow`: which model and thinking level each kind of task gets, and the cross-model review before a PR merges. Its routes come from `~/Documents/Custom-Skills/AI-Model-Guide/model-guide.md`; the first five rows also appear as `aiRecommendations` in `portfolio-next/src/content/portfolio.ts`. Keep all three in sync.
+- `ai-workflow`: which model and thinking level each kind of task gets, and the cross-model review before a medium or larger PR merges. Its routes come from `~/Documents/Custom-Skills/AI-Model-Guide/model-guide.md`; the first six rows also appear as `aiRecommendations` in `portfolio-next/src/content/portfolio.ts`. Keep all three in sync.
 - `ai-slop-code-review`: audit student codebases for AI-slop and outdated-template signals.
 
 `docs/how-to-write-skills.md` collects how both tools load and run skills.

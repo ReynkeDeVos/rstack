@@ -15,3 +15,4 @@
 ## Model routing
 
 - Before spawning or delegating a subagent, handing off a review, or opening or merging a pull request, load the `ai-workflow` skill and follow it.
+- When two attempts at the same problem have failed, or you keep circling one decision, load the `ai-workflow` skill and ask its advisor.
