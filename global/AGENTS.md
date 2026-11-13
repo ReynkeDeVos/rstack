@@ -1,11 +1,5 @@
 # User-wide agent instructions
 
-## Privilege escalation
-
-- Never use `sudo`.
-- When a command requires elevated privileges, use `run0` instead.
-- Keep each `run0` invocation narrowly scoped to the command that needs elevation.
-
 ## JavaScript package management
 
 - Prefer [`aube`](https://aube.jdx.dev/) over `npm`, `pnpm`, `deno`, `bun`, and other JavaScript package managers whenever it is convenient and supported by the surrounding tooling.
@@ -15,4 +9,9 @@
 ## Model routing
 
 - Before spawning or delegating a subagent, handing off a review, or opening or merging a pull request, load the `ai-workflow` skill and follow it.
-- When two attempts at the same problem have failed, or you keep circling one decision, load the `ai-workflow` skill and ask its advisor.
+- When two attempts at the same problem have failed, you keep circling one decision, or finished work keeps collecting more fixes instead of shipping, load the `ai-workflow` skill and ask Fable.
+
+## Scope and pushback
+
+- Before building what was asked, judge the approach: if it is a good idea, do it; otherwise say why and suggest something better.
+- Keep the change to what was asked. List further ideas and review nits as follow-ups for the user to pick.
