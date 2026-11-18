@@ -15,6 +15,7 @@
 
 - Before building what was asked, judge the approach: if it is a good idea, do it; otherwise say why and suggest something better.
 - Keep the change to what was asked. List further ideas and review nits as follow-ups for the user to pick.
+- Before calling work done or safe, run the tests, checks or changed code that prove it, and say what you ran. If you could not run something, say so.
 
 ## Pull requests
 
