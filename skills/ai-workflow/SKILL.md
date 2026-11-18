@@ -16,14 +16,13 @@ The user's model routing, updated 18 November 2026. Following it is the user's e
 | Ask Fable | Stuck runs, calls no check can settle, and whether circling work is good enough to ship | Fable 5.2 | High |
 | Bulk analysis | Classify or pattern-match across many files or a large data set | Haiku 5.5 | Medium |
 | Search & gather | Bounded lookups and side tasks for a lead | Opus 5.5 | Medium |
-| Use a computer | Routine browser and computer tasks | GPT-6.1 Sol | Medium; High for difficult dependencies |
-| Heavy computer use | Especially demanding computer tasks | GPT-6 Astra | High |
+| Use a computer | Routine browser and computer tasks | GPT-6.2 Sol | Medium; High for difficult dependencies |
+| Heavy computer use | Especially demanding computer tasks | GPT-6.2 Astra | High |
 
 - **Opus 5.5**: Extra High for hairy work that needs many checks: Windows-specific code, replaying a large corpus of logs, exploratory work where every stone gets turned; no Low or Max.
 - **Fable 5.2**: works best as the oracle: it finds the fix or the direction and directs, and Opus 5.5 implements and grinds it out, including the large, check-heavy parts such as test environments and edge cases. It calls work done without running the checks, so when it makes a change itself, the checks must pass before anyone trusts the result. As a reviewer it is precise but misses important issues, so it never replaces the cross-family review. In Explore visual design it builds the visual itself with the design skill on, and the result must still show what it is meant to show. Extra High only for the hardest problems; no Max, which scores worse on code. It is lazy and spiky: it can miss details and state wrong claims with confidence, so check its claims against the sources. Use it sparingly: on subscriptions it may use at most half of the shared weekly limit, and that half buys far less work than the same share of Opus.
-- **GPT-6.2 Astra**: only for review, where it beat GPT-6.1 Sol on every measure in Theo's evals and reported no wrong findings. Its reports are hard to read and it needs a very clear task: ask for each finding in plain English, and have Opus 5.5 restate a report you cannot follow.
-- **GPT-6.1 Sol**: Extra High only when High falls short; no Max.
-- **GPT-6 Astra**: only for heavy computer use; the target needs computer-use tools.
+- **GPT-6.2 Astra**: only for review and heavy computer use; computer use needs a target with computer-use tools. As a reviewer it beat GPT-6.1 Sol on every measure in Theo's evals and reported no wrong findings. Its reports are hard to read and it needs a very clear task: ask for each finding in plain English, and have Opus 5.5 restate a report you cannot follow.
+- **GPT-6.2 Sol**: Extra High only when High falls short; no Max.
 - **Haiku 5.5**: reasoning on; reads and labels, never writes code or decides; Low only for simple, checked tasks; High for longer ones; never the final reviewer.
 
 ## Routing
@@ -53,16 +52,15 @@ Only medium and larger changes need it. A change is **small** when a reader take
 
 Thinking levels map to effort values: Low `low`, Medium `medium`, High `high`, Extra High `xhigh`. Ultracode is a separate mode toggle, not an effort level.
 
-Inside T3 Code (the `t3-code` MCP tools are present), hand off every row through `delegate_task`, since it applies the thinking level for every model. The IDs come from `orchestrator_capabilities`; recheck there if a call is rejected.
+Inside T3 Code (the `t3-code` MCP tools are present), hand off every row through `delegate_task`, since it applies the thinking level for every model. The IDs come from `orchestrator_capabilities`; recheck there if a call is rejected. If a listed model is missing or rejected, use the newest model of the same family that `orchestrator_capabilities` (or, outside T3 Code, `~/.codex/models_cache.json`) lists, and tell the user.
 
 | Model | `target.providerInstanceId` | `target.model` | `target.options` |
 | --- | --- | --- | --- |
 | Opus 5.5 | `claudeAgent` | `claude-opus-5-5` | `{"effort":"high"}` |
 | Fable 5.2 | `claudeAgent` | `claude-fable-5-2` | `{"effort":"high"}` |
 | GPT-6.2 Astra | `codex` | `gpt-6.2-astra` | `{"reasoningEffort":"high"}` |
-| GPT-6.1 Sol | `codex` | `gpt-6.1-sol` | `{"reasoningEffort":"high"}` |
+| GPT-6.2 Sol | `codex` | `gpt-6.2-sol` | `{"reasoningEffort":"high"}` |
 | Haiku 5.5 | `claudeAgent` | `claude-haiku-5-5` | `{"effort":"medium"}` |
-| GPT-6 Astra | `codex` | `gpt-6-astra` | `{"reasoningEffort":"high"}` |
 
 Elsewhere:
 
@@ -71,6 +69,5 @@ Elsewhere:
 | Opus 5.5 | Agent tool, `model: "opus"`, `effort: "high"`, not a `fork` (forks ignore the model) | `claude -p --model opus --effort high "<prompt>"` |
 | Fable 5.2 | Agent tool, `model: "fable"`, `effort: "high"`, not a `fork` | `claude -p --model fable --effort high "<prompt>"` |
 | GPT-6.2 Astra | `codex exec -m gpt-6.2-astra -c model_reasoning_effort=high "<prompt>"` | `spawn_agent` with `model: "gpt-6.2-astra"`, `reasoning_effort: "high"` and `fork_turns: "none"` (full-history forks take no overrides); without those fields, the `codex exec` command |
-| GPT-6.1 Sol | `codex exec -m gpt-6.1-sol -c model_reasoning_effort=high "<prompt>"` | as GPT-6.2 Astra, with `model: "gpt-6.1-sol"` |
+| GPT-6.2 Sol | `codex exec -m gpt-6.2-sol -c model_reasoning_effort=high "<prompt>"` | as GPT-6.2 Astra, with `model: "gpt-6.2-sol"` |
 | Haiku 5.5 | Agent tool, `model: "haiku"`, `effort: "medium"`, not a `fork` | `claude -p --model haiku --effort medium "<prompt>"` |
-| GPT-6 Astra | `codex exec -m gpt-6-astra -c model_reasoning_effort=high "<prompt>"` | as GPT-6.2 Astra, with `model: "gpt-6-astra"` |
