@@ -1,4 +1,4 @@
-# Agent skills
+# rstack
 
 My setup for Codex and Claude Code.
 
@@ -23,8 +23,8 @@ Skill packs go in as plugins, never also via `skills add`, so nothing loads twic
 ## Setup on a new machine
 
 ```sh
-git clone git@github.com:ReynkeDeVos/agent-skills.git ~/Documents/Custom-Skills/agent-skills
-cd ~/Documents/Custom-Skills/agent-skills
+git clone git@github.com:ReynkeDeVos/rstack.git ~/Documents/Custom-Skills/rstack
+cd ~/Documents/Custom-Skills/rstack
 mkdir -p ~/.agents/skills ~/.claude/skills ~/.codex
 
 # Instructions: one file for both tools
@@ -38,9 +38,8 @@ for name in $(ls skills); do
   ln -sfn ../../.agents/skills/"$name" ~/.claude/skills/"$name"
 done
 
-# find-skills
-aubx skills add vercel-labs/skills --global --agent codex --skill find-skills
-ln -sfn ../../.agents/skills/find-skills ~/.claude/skills/find-skills
+# find-skills (pick global and the agents in the menu)
+aubx skills add https://github.com/vercel-labs/skills --skill find-skills
 
 # Plugins
 for repo in mattpocock/skills DietrichGebert/ponytail pbakaus/impeccable; do
