@@ -9,7 +9,7 @@
 ## Model routing
 
 - Before spawning or delegating a subagent, handing off a review, or opening or merging a pull request, load the `ai-workflow` skill and follow it.
-- When two attempts at the same problem have failed, you keep circling one decision, or finished work keeps collecting more fixes instead of shipping, load the `ai-workflow` skill and ask Fable.
+- When two attempts at the same problem have failed, you keep circling one decision, or finished work keeps collecting more fixes instead of shipping, load the `ai-workflow` skill and follow its step for stuck runs.
 
 ## Scope and pushback
 

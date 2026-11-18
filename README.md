@@ -7,6 +7,8 @@ My setup for Codex and Claude Code.
 - `global/AGENTS.md`: user-wide instructions for both tools
 - `skills/ai-workflow`: which model and thinking level each task gets, plus the cross-review before merge
 - `skills/ai-slop-code-review`: audit student codebases for AI slop
+- `docs/model-guide.md`: the evidence behind the `ai-workflow` routes, source by source, with timestamps
+- `docs/cross-harness-subagents-research.md`: how Claude Code, Codex and T3 Code hand work to each other
 
 ## What I install
 
@@ -59,4 +61,4 @@ claude plugin marketplace update && claude plugin update <plugin>
 codex plugin marketplace upgrade
 ```
 
-`docs/how-to-write-skills.md` covers how both tools load skills. The `ai-workflow` routes come from `~/Documents/Custom-Skills/AI-Model-Guide/model-guide.md`, and the first six rows also appear in `portfolio-next/src/content/portfolio.ts`. Keep all three in sync.
+`docs/how-to-write-skills.md` covers how both tools load skills. The `ai-workflow` routes come from `docs/model-guide.md`, and the first six rows also appear in `portfolio-next/src/content/portfolio.ts`. Keep all three in sync. The skill carries only the rules; the guide keeps the sources.
