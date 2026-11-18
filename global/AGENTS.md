@@ -15,3 +15,11 @@
 
 - Before building what was asked, judge the approach: if it is a good idea, do it; otherwise say why and suggest something better.
 - Keep the change to what was asked. List further ideas and review nits as follow-ups for the user to pick.
+
+## Pull requests
+
+- A PR title or body follows the `pr` skill, with these rules winning where they differ. A repository's own PR template or `CONTRIBUTING.md` wins over both.
+- Title: a conventional commit in plain language that names what the change does for the user, such as `perf(server): cut websocket frame size by 70%+ with gzipping`.
+- Open the body with the problem in a sentence or two, taken from the user's original request, then how the change fixes it. The `pr` skill's sections follow only where they add something; a small change can stop after those two sentences.
+- End the body with `Created with <model> in <harness>.`, naming every model that wrote part of the change, followed by the `ai-workflow` cross-review record on one line.
+- Before submitting, check the title, body, quotes and attachments for secrets and private details.
