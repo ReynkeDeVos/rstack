@@ -5,7 +5,7 @@ description: Routes each task to its model and thinking level, and gates merging
 
 # AI workflow
 
-The user's model routing. The tables and settings name exact versions; the rest of this skill uses model names. Following it is the user's explicit request, so set the model and thinking level on every handoff, even where a tool says to inherit the parent's.
+The user's model routing. Following it is the user's explicit request, so set the model and thinking level on every handoff, even where a tool says to inherit the parent's.
 
 | Task | Covers | Model | Thinking |
 | --- | --- | --- | --- |
@@ -32,7 +32,7 @@ The user's model routing. The tables and settings name exact versions; the rest 
 3. Brief Opus with the scope and the out-of-scope list, and add: "If you think this is a good idea, do it. Otherwise, suggest something else." Opus follows the task and grows it; the brief is where you hold it small.
 4. A Haiku task names the pattern, the output format and a check; the lead spot-checks a sample before relying on it.
 5. Take the row's thinking level, adjust it by the model's note above, and pass it with the model using the settings below.
-6. A run is stuck when two attempts at the same problem have failed, it keeps circling one decision, or finished work keeps collecting more fixes instead of shipping. Switch the work to the Get unstuck row's model with the problem, the evidence, the diff and what was tried, and ask what actually remains. It answers with a fix, a plan for the original row's model, or "ship it"; a fix it makes itself passes its checks first.
+6. A run is stuck when two attempts at the same problem have failed, it keeps circling one decision, or finished work keeps collecting more fixes instead of shipping. Switch the work to the Get unstuck row's model with the problem, the evidence, the diff and what was tried, and ask what actually remains. It answers with a fix, a plan for the original row's model, or "ship it".
 
 The session's own model and thinking level stay the user's choice: route the work you hand off.
 
@@ -52,7 +52,7 @@ Only medium and larger changes need it. A change is **small** when a reader take
 
 Thinking levels map to effort values: Low `low`, Medium `medium`, High `high`, Extra High `xhigh`. Ultracode is a separate mode toggle, not an effort level.
 
-Inside T3 Code (the `t3-code` MCP tools are present), hand off every row through `delegate_task`, since it applies the thinking level for every model. The IDs come from `orchestrator_capabilities`; recheck there if a call is rejected. If a listed model is missing or rejected, use the newest model of the same family that `orchestrator_capabilities` (or, outside T3 Code, `~/.codex/models_cache.json`) lists, and tell the user.
+Inside T3 Code (the `t3-code` MCP tools are present), hand off every row through `delegate_task`, since it applies the thinking level for every model. The IDs come from `orchestrator_capabilities`; recheck there if a call is rejected. If a listed model is missing or rejected, switch to the newest other version of the same model (Sol to Sol, Opus to Opus, never Sol to Astra) that `orchestrator_capabilities` lists, and tell the user; if there is none, report the handoff as blocked. Outside T3 Code, the Claude aliases below already pick the newest version, and `~/.codex/models_cache.json` lists the GPT versions.
 
 | Model | `target.providerInstanceId` | `target.model` | `target.options` |
 | --- | --- | --- | --- |
