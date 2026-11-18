@@ -52,7 +52,7 @@ Only medium and larger changes need it. A change is **small** when a reader take
 
 Thinking levels map to effort values: Low `low`, Medium `medium`, High `high`, Extra High `xhigh`. Ultracode is a separate mode toggle, not an effort level.
 
-Inside T3 Code (the `t3-code` MCP tools are present), hand off every row through `delegate_task`, since it applies the thinking level for every model. The IDs come from `orchestrator_capabilities`; recheck there if a call is rejected. If a listed model is missing or rejected, switch to the newest other version of the same model (Sol to Sol, Opus to Opus, never Sol to Astra) that `orchestrator_capabilities` lists, and tell the user; if there is none, report the handoff as blocked. Outside T3 Code, the Claude aliases below already pick the newest version, and `~/.codex/models_cache.json` lists the GPT versions.
+Inside T3 Code (the `t3-code` MCP tools are present), hand off every row through `delegate_task`, since it applies the thinking level for every model. The IDs come from `orchestrator_capabilities`; recheck there if a call is rejected. If a listed model is missing or rejected, switch to the newest version of the same model not yet tried in this handoff (Sol to Sol, Opus to Opus, never Sol to Astra) that `orchestrator_capabilities` lists, and tell the user; if there is none, report the handoff as blocked. Outside T3 Code, the Claude aliases below already pick the newest version, and `~/.codex/models_cache.json` lists the GPT versions.
 
 | Model | `target.providerInstanceId` | `target.model` | `target.options` |
 | --- | --- | --- | --- |
