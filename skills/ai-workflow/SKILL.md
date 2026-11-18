@@ -5,7 +5,7 @@ description: Routes each task to its model and thinking level, and gates merging
 
 # AI workflow
 
-The user's model routing, updated 18 November 2026. Following it is the user's explicit request, so set the model and thinking level on every handoff, even where a tool says to inherit the parent's.
+The user's model routing. Following it is the user's explicit request, so set the model and thinking level on every handoff, even where a tool says to inherit the parent's.
 
 | Task | Covers | Model | Thinking |
 | --- | --- | --- | --- |
