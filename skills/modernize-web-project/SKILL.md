@@ -1,13 +1,13 @@
 ---
 name: modernize-web-project
-description: Modernizes a JavaScript or TypeScript web project by auditing its dependencies, scripts, TypeScript setup, code and UI against Node 26 and TypeScript 7, then proposing evidence-backed changes. Use when asked to modernize, upgrade or clean up a web project, find packages a built-in Node or browser API replaces, prepare a project for TypeScript 7, spot outdated tutorial or template patterns, or lint a project that has no linter.
+description: Modernizes a JavaScript or TypeScript web project by auditing its dependencies, scripts, TypeScript setup, code and UI against the current Node LTS and the latest TypeScript release, then proposing evidence-backed changes. Use when asked to modernize, upgrade or clean up a web project, find packages a built-in Node or browser API replaces, prepare a project for a new TypeScript major, spot outdated tutorial or template patterns, or lint a project that has no linter.
 ---
 
 # Modernize a web project
 
 Find what the project no longer needs and what its runtime now does for free, prove each finding, and hand the user a ranked list of changes. Every finding is a **candidate**: it carries its evidence, the condition under which the current code should stay, and the check that proves the change safe.
 
-**Target**: Node 26 and TypeScript 7, unless the project pins an older floor in `engines.node`, `.nvmrc`, `.node-version`, `mise.toml`, the CI matrix or its deploy target. A pinned older floor wins; name it in the report and judge replacements against it.
+**Target**: the active Node LTS and the latest stable TypeScript, looked up in step 1, unless the project pins an older floor in `engines.node`, `.nvmrc`, `.node-version`, `mise.toml`, the CI matrix or its deploy target. A pinned older floor wins; name it in the report and judge replacements against it.
 
 The default is a report. Edit files only when the user asks for the changes; then follow [Apply](#apply).
 
@@ -34,9 +34,18 @@ The default is a report. Edit files only when the user asks for the changes; the
 
 ### 1. Baseline
 
-Read `README`, `package.json`, the lockfile, every `tsconfig*`, framework and bundler config, CI workflows and deployment config. Record the runtime floor and where it comes from, the package manager, framework and TypeScript versions, the module type (`"type"`, `.cjs` / `.mjs`), which linter the project uses (ESLint, oxlint, Biome or none), whether it is a workspace with several packages, and the original's `git status --short`.
+Look up the target versions. Offline, use the versions the references were written against (Node 26 LTS, TypeScript 7.0) and say so in the report.
 
-Done when the runtime floor is a concrete version with its source named, or Node 26 by default.
+```sh
+node -e "fetch('https://nodejs.org/dist/index.json').then(r=>r.json()).then(d=>console.log(d.find(r=>r.lts).version))"
+npm view typescript version
+```
+
+When a target is newer than Node 26 or TypeScript 7.0, read the release notes in between (Node's notable changes, TypeScript's breaking changes) and use what they add or remove the way you use the reference tables.
+
+Read `README`, `package.json`, every `tsconfig*`, framework and bundler config, CI workflows and deployment config. Take the package manager from the lockfile's file name or the `packageManager` field; the lockfile itself needs no reading. Record the target versions, the runtime floor and where it comes from, the package manager, framework and TypeScript versions, the module type (`"type"`, `.cjs` / `.mjs`), which linter the project uses (ESLint, oxlint, Biome or none), whether it is a workspace with several packages, and the original's `git status --short`.
+
+Done when the target Node and TypeScript versions are known, and the runtime floor is a concrete version with its source named, or the target Node LTS by default.
 
 ### 2. Checks
 
@@ -45,12 +54,12 @@ In the audit copy, run whichever exist:
 1. The project's `typecheck`, `lint`, `build` and `test` scripts.
 2. `<pm> outdated` and `<pm> audit`.
 3. `npx --yes @e18e/cli analyze --json > e18e.json 2> e18e.err` for dependency replacements, duplicates and install size. Read stdout and stderr separately: exit 1 with messages in the JSON is a result, while an error in stderr (no recognized lockfile, a failed `publint` on a private package without `version`) makes the run partial or skipped. Record which.
-4. TypeScript 7, for every `tsconfig*.json` except files used only as an `extends` base, and except configs an existing check already compiles with TypeScript 7:
-   - A config with `references` builds its graph: `npx --yes -p typescript@7 tsc -b <config>` (the copy absorbs the emitted files). Checking one referenced project with `-p` alone reports `TS6305` for declarations that were never built; that is not a finding.
-   - Any other config: `npx --yes -p typescript@7 tsc --noEmit -p <config>`.
-   - When a config fails, run the same command with the project's own TypeScript (`<pm> exec tsc ...` in the copy); a project without a `typescript` dependency has no baseline, so say so. An error the project's TypeScript reports identically is baseline. An error only TypeScript 7 reports, or one about an option or value listed in [TypeScript 7](references/dependencies.md#typescript-7), is a TypeScript 7 finding.
+4. The target TypeScript (`<ts>`, the version from step 1), for every `tsconfig*.json` except files used only as an `extends` base, and except configs an existing check already compiles with that version:
+   - A config with `references` builds its graph: `npx --yes -p typescript@<ts> tsc -b <config>` (the copy absorbs the emitted files). Checking one referenced project with `-p` alone reports `TS6305` for declarations that were never built; that is not a finding.
+   - Any other config: `npx --yes -p typescript@<ts> tsc --noEmit -p <config>`.
+   - When a config fails, run the same command with the project's own TypeScript (`<pm> exec tsc ...` in the copy); a project without a `typescript` dependency has no baseline, so say so. An error the project's TypeScript reports identically is baseline. An error only the target TypeScript reports, or one about an option or value listed in [TypeScript 7](references/dependencies.md#typescript-7) or in the release notes from step 1, is a TypeScript upgrade finding.
 
-Done when each check has a recorded result: passed, failed (with the first error), partial, or skipped (with the reason). A failure that exists before any change is baseline, not a reason for a finding, apart from the TypeScript 7 findings check 4 separates out.
+Done when each check has a recorded result: passed, failed (with the first error), partial, or skipped (with the reason). A failure that exists before any change is baseline, not a reason for a finding, apart from the TypeScript upgrade findings check 4 separates out.
 
 ### 3. Dependencies
 
@@ -68,7 +77,7 @@ Done when every listed package has a verdict and its evidence. A package that on
 
 ### 4. Scripts and config
 
-Compare each `package.json` script and tool config with what Node 26, TypeScript 7 and the framework provide, using [Scripts](references/dependencies.md#scripts) and [TypeScript 7](references/dependencies.md#typescript-7). Look for watchers and loaders Node replaces, `dotenv` preloads, hard-coded `node_modules/.bin` paths, Babel or webpack config beside Vite, `tsconfig` options TypeScript 7 removed, committed build output beside its source, and CommonJS in a project that could be ESM.
+Compare each `package.json` script and tool config with what the target Node, the target TypeScript and the framework provide, using [Scripts](references/dependencies.md#scripts) and [TypeScript 7](references/dependencies.md#typescript-7). Look for watchers and loaders Node replaces, `dotenv` preloads, hard-coded `node_modules/.bin` paths, Babel or webpack config beside Vite, `tsconfig` options the target TypeScript removed, committed build output beside its source, and CommonJS in a project that could be ESM.
 
 Done when every script and config file is either fine or a finding.
 
@@ -86,7 +95,7 @@ node <skill-dir>/scripts/oxlint-setup.mjs . "$T"   # prints the plugins it chose
 
 - Act on every line in the script's `notes`. In a workspace, lint the root with one `--ignore-pattern` per entry in `rootIgnorePatterns`, then run the setup and oxlint in each child package folder with a fresh toolbox, so every file is linted once under its own package's settings. When Tailwind's entry CSS was not found or is the wrong one, pass it as the third argument and rerun the setup before installing.
 - Add `--ignore-pattern` for generated or vendored folders `.gitignore` does not cover; patterns inside the external config cannot match project files.
-- A project that uses ESLint also runs its own `lint` script. When that setup includes `typescript-eslint`, note that it supports TypeScript only below 6.1, so it blocks TypeScript 7; `npx --yes @oxlint/migrate`, run in the audit copy, drafts an equivalent `.oxlintrc.json` as the candidate change.
+- A project that uses ESLint also runs its own `lint` script. When that setup includes `typescript-eslint`, compare its `typescript` peer range with the target (in November 2026 it ended below 6.1, which blocks TypeScript 7); `npx --yes @oxlint/migrate`, run in the audit copy, drafts an equivalent `.oxlintrc.json` as the candidate change.
 - A `tsconfig-error` in the output means oxlint could not use that config, so type-aware rules said nothing for its files. Report the type-aware check as partial, naming those configs, and keep the diagnostics from the others.
 - oxlint reads only the `<script>` parts of `.vue`, `.svelte` and `.astro` files; their templates get the manual pass in step 6.
 
@@ -106,7 +115,7 @@ Answer in chat unless the user asked for a file. Lead with up to three changes t
 
 ```md
 ## Baseline
-Runtime floor: Node 26 (default) · pnpm 10 · Vite 8, React 19, Tailwind 4 · TypeScript 6.0 · ESM · no linter
+Targets: Node 26.13 LTS, TypeScript 7.0 · Runtime floor: Node 26 (default) · pnpm 10 · Vite 8, React 19, Tailwind 4 · TypeScript 6.0 · ESM · no linter
 
 ## Checks
 | Check | Result |
@@ -120,7 +129,7 @@ Runtime floor: Node 26 (default) · pnpm 10 · Vite 8, React 19, Tailwind 4 · T
 ## Not checked
 ```
 
-Rank findings by payoff against risk: TypeScript 7 blockers, unused packages and broken patterns first, style last. Group lint hits by rule with a count and two or three locations rather than one row each. Write each finding as a fact plus a suggestion ("`node-fetch` is imported only in `src/api.ts:3`; Node 26 has global `fetch`"), and separate what you observed from what you judge.
+Rank findings by payoff against risk: TypeScript upgrade blockers, unused packages and broken patterns first, style last. Group lint hits by rule with a count and two or three locations rather than one row each. Write each finding as a fact plus a suggestion ("`node-fetch` is imported only in `src/api.ts:3`; Node 26 has global `fetch`"), and separate what you observed from what you judge.
 
 ## Apply
 

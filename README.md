@@ -6,7 +6,7 @@ My setup for Codex and Claude Code.
 
 - `global/AGENTS.md`: user-wide instructions for both tools
 - `skills/ai-workflow`: which model and thinking level each task gets, plus the cross-review before merge
-- `skills/modernize-web-project`: audit a JS/TS web project against Node 26 and TypeScript 7 (e18e, oxlint, Tailwind canonical classes) and propose changes
+- `skills/modernize-web-project`: audit a JS/TS web project against the current Node LTS and the latest TypeScript (e18e, oxlint, Tailwind canonical classes) and propose changes
 - `docs/model-guide.md`: the evidence behind the `ai-workflow` routes, source by source, with timestamps
 - `docs/cross-harness-subagents-research.md`: how Claude Code, Codex and T3 Code hand work to each other
 

@@ -1,6 +1,6 @@
 # Dependencies, scripts and TypeScript
 
-How to judge each package, script and `tsconfig` option against Node 26 and TypeScript 7. Every built-in below is stable in Node 26. When the project pins an older Node, check the API's history in the Node docs before suggesting it.
+How to judge each package, script and `tsconfig` option against the target Node LTS and TypeScript. Written against Node 26 LTS and TypeScript 7.0 (November 2026), and every built-in below is stable in Node 26. A newer target keeps all of this and adds what its release notes change. When the project pins an older Node, check the API's history in the Node docs before suggesting it.
 
 ## e18e
 
@@ -79,18 +79,18 @@ New defaults to make explicit when the project relied on the old ones: `strict` 
 
 TypeScript 7.0 does not ship the legacy JS compiler API (`createProgram`, the language service); its new API is experimental. Tools built on the legacy API stay on TypeScript 6: `typescript-eslint` (peer `<6.1`), `ts-node`, and `vue-tsc`. Check each installed tool's `typescript` peer range rather than assuming: `ts-morph` bundles its own TypeScript and is unaffected, and `svelte-check` has a `--tsgo` mode that takes TypeScript 7 installed as `@typescript/native`. Keep a legacy tool working through the alias `"typescript": "npm:@typescript/typescript6@^6"` (binary `tsc6`) with TypeScript 7 under a second name for type checks. Each such tool is a finding: a TypeScript 7 blocker, with oxlint or Node type stripping as the replacement where one exists.
 
-For a Node 26 project, `@tsconfig/node26` is the base: `target` `es2025`, `lib` `["es2025", "esnext.collection", "esnext.temporal"]`, `module` `nodenext`, `types` `["node"]`.
+Code Node runs extends the `@tsconfig/node<major>` base for its runtime floor. `@tsconfig/node26` sets `target` `es2025`, `lib` `["es2025", "esnext.collection", "esnext.temporal"]`, `module` `nodenext`, `types` `["node"]`. Prefer the numbered base over `@tsconfig/node-lts`, which changes under the project at each LTS switch.
 
 ### Type stripping
 
-Node 26 runs `.ts` files directly by stripping types; it never typechecks, so `tsc --noEmit` stays. It fails on:
+Node 26 and later run `.ts` files directly by stripping types; it never typechecks, so `tsc --noEmit` stays. It fails on:
 
 - enums, runtime namespaces, parameter properties and `import x = require()` (`ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX`)
 - decorators, `.tsx` files, and `tsconfig` `paths` (use `#` subpath imports in `package.json` instead)
 - type-only imports written without `type`
 - `.ts` files inside `node_modules`
 
-`--experimental-transform-types` is gone in Node 26. A project with that syntax keeps `tsx` or a build step, or moves to erasable syntax. The `tsconfig` for code Node runs directly:
+`--experimental-transform-types` is gone in Node 26. A project with that syntax keeps `tsx` or a build step, or moves to erasable syntax. The `tsconfig` for code Node runs directly, with `26` swapped for the runtime floor's major:
 
 ```json
 {
@@ -108,7 +108,7 @@ A project that emits JavaScript swaps `noEmit` and `allowImportingTsExtensions` 
 
 ## Scripts
 
-| In a script | On Node 26 | Keep when |
+| In a script | On Node 26 and later | Keep when |
 | --- | --- | --- |
 | `nodemon src/index.js` | `node --watch src/index.js` | non-Node commands, custom restart rules |
 | `ts-node src/index.ts`, `tsx src/index.ts` | `node src/index.ts` | the syntax in [Type stripping](#type-stripping) |
