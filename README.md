@@ -61,4 +61,4 @@ claude plugin marketplace update && claude plugin update <plugin>
 codex plugin marketplace upgrade
 ```
 
-`docs/how-to-write-skills.md` covers how both tools load skills. The `ai-workflow` routes come from `docs/model-guide.md`, and the first six rows also appear in `portfolio-next/src/content/portfolio.ts`. Keep all three in sync. The skill carries only the rules; the guide keeps the sources. Every update names the newest version of each model (Sol, Astra, Opus, Fable, Haiku, Sonnet), even one no video has tested; a version never jumps to a different model name.
+`docs/how-to-write-skills.md` covers how both tools load skills. The `ai-workflow` routes come from `docs/model-guide.md`, and the first seven rows also appear in `portfolio-next/src/content/portfolio.ts`. Keep all three in sync. The skill carries only the rules; the guide keeps the sources. Every update names the newest version of each model (Sol, Astra, Opus, Fable, Haiku, Sonnet, Neon), even one no video has tested; a version never jumps to a different model name.

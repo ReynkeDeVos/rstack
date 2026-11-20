@@ -10,7 +10,8 @@ The user's model routing. Following it is the user's explicit request, so set th
 | Task | Covers | Model | Thinking |
 | --- | --- | --- | --- |
 | Investigate & debug | Root causes, regressions, repros and architecture | Opus 5.5 | High |
-| Build & implement | Features, refactors, migrations and long ports | Opus 5.5 | High |
+| Build & implement | Features, refactors, migrations, long ports and performance work | Gemini 4 Neon | Extra High; High for small, clear edits |
+| Write for people | Plans, proposals and feature write-ups a person will read | Gemini 4 Neon | High |
 | Review code | Independent cross-family review | GPT-6.2 Astra | High |
 | Explore visual design | Fresh visual directions, graphics and unique visualizers | Fable 5.2 | High |
 | Get unstuck | Stuck runs, calls no check can settle, and whether circling work is good enough to ship | Fable 5.2 | High |
@@ -19,8 +20,9 @@ The user's model routing. Following it is the user's explicit request, so set th
 | Use a computer | Routine browser and computer tasks | GPT-6.2 Sol | Medium; High for difficult dependencies |
 | Heavy computer use | Especially demanding computer tasks | GPT-6.2 Astra | High |
 
-- **Opus**: Extra High for hairy work that needs many checks: Windows-specific code, replaying a large corpus of logs, exploratory work where every stone gets turned; no Low or Max.
-- **Fable**: works best as the oracle: it finds the fix or the direction and directs, and Opus implements and grinds it out, including the large, check-heavy parts such as test environments and edge cases. It calls work done without running the checks, so when it makes a change itself, the checks must pass before anyone trusts the result. As a reviewer it is precise but misses important issues, so it never replaces the cross-family review. In Explore visual design it builds the visual itself with a design skill loaded, if one is installed, and the result must still show what it is meant to show. Extra High only for the hardest problems; no Max, which scores worse on code. It is lazy and spiky: it can miss details and state wrong claims with confidence, so check its claims against the sources. Use it sparingly: it drains usage limits far faster than Opus.
+- **Neon**: stays on task over long runs and reports clearly. It states claims about a codebase without checking them, though it checks when it implements, so investigation stays with Opus and its answers about code need a check. It can miss a skill the brief names: give the skill's file path and tell it to read the file. It is weak at 3D visuals, which go to Fable. When the handoff cannot reach it (T3 Code's `antigravity` provider or `agy models` does not list it), use Opus 5.5 at High for its rows and tell the user.
+- **Opus**: builds when Neon is unavailable. Extra High when investigating hairy work that needs many checks: Windows-specific code, replaying a large corpus of logs, exploratory work where every stone gets turned; no Low or Max.
+- **Fable**: works best as the oracle: it finds the fix or the direction and directs, and the Build & implement model implements and grinds it out, including the large, check-heavy parts such as test environments and edge cases. It calls work done without running the checks, so when it makes a change itself, the checks must pass before anyone trusts the result. As a reviewer it is precise but misses important issues, so it never replaces the cross-family review. In Explore visual design it builds the visual itself with a design skill loaded, if one is installed, and the result must still show what it is meant to show. Extra High only for the hardest problems; no Max, which scores worse on code. It is lazy and spiky: it can miss details and state wrong claims with confidence, so check its claims against the sources. Use it sparingly: it drains usage limits far faster than Opus.
 - **Astra**: only for review and heavy computer use; computer use needs a target with computer-use tools. It is the most thorough reviewer and rarely reports a wrong finding, but its reports are hard to read and it needs a very clear task: ask for each finding in plain English, and have Opus restate a report you cannot follow.
 - **Sol**: Extra High only when High falls short; no Max.
 - **Haiku**: reasoning on; reads and labels, never writes code or decides; Low only for simple, checked tasks; High for longer ones; never the final reviewer.
@@ -28,8 +30,8 @@ The user's model routing. Following it is the user's explicit request, so set th
 ## Routing
 
 1. Match each handoff to the row for its purpose. Collecting facts in a bounded area is Search & gather; diagnosing why is Investigate & debug; labelling hundreds of items is Bulk analysis.
-2. When choosing between Opus and Fable, start on Opus. Work a check can settle (tests, a repro, a spec to hill-climb) stays there. Move to Fable when no check settles the work and Opus's result falls short or its options all look alike, or start on Fable when taste plainly decides it, as with fresh visuals.
-3. Brief Opus with the scope and the out-of-scope list, and add: "If you think this is a good idea, do it. Otherwise, suggest something else." Opus follows the task and grows it; the brief is where you hold it small.
+2. When choosing between the row's model and Fable, start on the row's model. Work a check can settle (tests, a repro, a spec to hill-climb) stays there. Move to Fable when no check settles the work and the result falls short or its options all look alike, or start on Fable when taste plainly decides it, as with fresh visuals.
+3. Brief Opus or Neon with the scope and the out-of-scope list. Opus also gets: "If you think this is a good idea, do it. Otherwise, suggest something else." Opus follows the task and grows it; the brief is where you hold it small.
 4. A Haiku task names the pattern, the output format and a check; the lead spot-checks a sample before relying on it.
 5. Take the row's thinking level, adjust it by the model's note above, and pass it with the model using the settings below.
 6. A run is stuck when two attempts at the same problem have failed, it keeps circling one decision, or finished work keeps collecting more fixes instead of shipping. Switch the work to the Get unstuck row's model with the problem, the evidence, the diff and what was tried, and ask what actually remains. It answers with a fix, a plan for the original row's model, or "ship it".
@@ -38,7 +40,7 @@ The session's own model and thinking level stay the user's choice: route the wor
 
 ## Cross-review before merge
 
-A PR a Claude model opens, or is about to open, gets an independent review from Astra at High before it merges; one a GPT model opens gets one from Opus at High. The opener's family sets the reviewer, whoever edits the PR later. This overrides the Review code row.
+A PR a Claude or Gemini model opens, or is about to open, gets an independent review from Astra at High before it merges; one a GPT model opens gets one from Opus at High. The opener's family sets the reviewer, whoever edits the PR later. This overrides the Review code row.
 
 Only medium and larger changes need it. A change is **small** when a reader takes in its whole effect at a glance: copy, a typo, a comment, a config value or a few-line fix in one place. New or changed logic, a refactor, a change across several areas, any security, permissions, auth, data-loss or concurrency risk, and any change you are unsure about count as medium or larger. A small PR is ready once the author reports high confidence on its head commit, backed by the evidence step 3 asks for, and its description says the cross-review was skipped as a small change.
 
@@ -52,10 +54,11 @@ Only medium and larger changes need it. A change is **small** when a reader take
 
 Thinking levels map to effort values: Low `low`, Medium `medium`, High `high`, Extra High `xhigh`. Ultracode is a separate mode toggle, not an effort level.
 
-Inside T3 Code (the `t3-code` MCP tools are present), hand off every row through `delegate_task`, since it applies the thinking level for every model. The IDs come from `orchestrator_capabilities`; recheck there if a call is rejected. If a listed model is missing or rejected, switch to the newest version of the same model not yet tried in this handoff (Sol to Sol, Opus to Opus, never Sol to Astra) that `orchestrator_capabilities` lists, and tell the user; if there is none, report the handoff as blocked. Outside T3 Code, the Claude aliases below already pick the newest version, and `~/.codex/models_cache.json` lists the GPT versions.
+Inside T3 Code (the `t3-code` MCP tools are present), hand off every row through `delegate_task`, since it applies the thinking level for every model. The IDs come from `orchestrator_capabilities`; recheck there if a call is rejected. If a listed model is missing or rejected, switch to the newest version of the same model not yet tried in this handoff (Sol to Sol, Opus to Opus, never Sol to Astra) that `orchestrator_capabilities` lists, and tell the user; if there is none, report the handoff as blocked. The one exception: a Neon handoff with no Neon available goes to Opus 5.5 at High. Outside T3 Code, the Claude aliases below already pick the newest version, and `~/.codex/models_cache.json` lists the GPT versions.
 
 | Model | `target.providerInstanceId` | `target.model` | `target.options` |
 | --- | --- | --- | --- |
+| Gemini 4 Neon | `antigravity` | `gemini-4-neon` | `{"thought_level":"xhigh"}`; `"high"` for High rows |
 | Opus 5.5 | `claudeAgent` | `claude-opus-5-5` | `{"effort":"high"}` |
 | Fable 5.2 | `claudeAgent` | `claude-fable-5-2` | `{"effort":"high"}` |
 | GPT-6.2 Astra | `codex` | `gpt-6.2-astra` | `{"reasoningEffort":"high"}` |
@@ -66,6 +69,7 @@ Elsewhere:
 
 | Model | From Claude Code | From Codex |
 | --- | --- | --- |
+| Gemini 4 Neon | `agy --model gemini-4-neon-xhigh -p "<prompt>"` (`--model` before `-p`); `gemini-4-neon-high` for High rows | the same `agy` command |
 | Opus 5.5 | Agent tool, `model: "opus"`, `effort: "high"`, not a `fork` (forks ignore the model) | `claude -p --model opus --effort high "<prompt>"` |
 | Fable 5.2 | Agent tool, `model: "fable"`, `effort: "high"`, not a `fork` | `claude -p --model fable --effort high "<prompt>"` |
 | GPT-6.2 Astra | `codex exec -m gpt-6.2-astra -c model_reasoning_effort=high "<prompt>"` | `spawn_agent` with `model: "gpt-6.2-astra"`, `reasoning_effort: "high"` and `fork_turns: "none"` (full-history forks take no overrides); without those fields, the `codex exec` command |
